@@ -11,3 +11,58 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Local tools (keep binaries out of git)
+.pandoc_local/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Incoming materials (local binaries)
+Work/00_Inbox/Incoming/**
+!Work/00_Inbox/Incoming/**/*.md
+!Work/00_Inbox/Incoming/**/
+Work/99_Archive/Incoming/**
+!Work/99_Archive/Incoming/**/*.md
+!Work/99_Archive/Incoming/**/
+
+# Personal domain (keep private for now)
+# Keep the scaffold/dashboards in git, ignore personal content files.
+Personal/00_Inbox/*.md
+!Personal/00_Inbox/README.md
+
+Personal/10_Daily/*.md
+!Personal/10_Daily/README.md
+
+Personal/20_Tasks/P-T-*.md
+!Personal/20_Tasks/00_Taskboard.md
+!Personal/20_Tasks/00_Kanban.md
+!Personal/20_Tasks/README.md
+
+Personal/30_Projects/P-PROJ-*.md
+!Personal/30_Projects/00_Projects.md
+!Personal/30_Projects/README.md
+
+Personal/40_Areas/P-AREA-*.md
+!Personal/40_Areas/00_Areas.md
+!Personal/40_Areas/README.md
+
+Personal/50_Notes/*.md
+!Personal/50_Notes/00_Notes.md
+!Personal/50_Notes/README.md
+
+Personal/60_Goals/P-GOAL-*.md
+!Personal/60_Goals/00_Goals.md
+!Personal/60_Goals/README.md
+
+Personal/70_Reviews/weekly/*.md
+!Personal/70_Reviews/weekly/README.md
+!Personal/70_Reviews/00_Reviews.md
+!Personal/70_Reviews/README.md
+
+Personal/90_Assets/**
+!Personal/90_Assets/README.md
+
+Personal/99_Archive/**
+!Personal/99_Archive/README.md

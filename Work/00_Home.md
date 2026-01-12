@@ -16,6 +16,11 @@
 - `[[W-PROJ-bootstrap-life-vault]]`
 - `[[Work/70_Reviews/weekly/2026-W03]]`
 
+## Current focus
+- `[[W-GOAL-2026-w03-deliverables]]`
+- `[[W-PROJ-f3-interface-mockups]]`
+- `[[W-PROJ-bi-core-xp-historic-inputs]]`
+
 ## Urgent (due before tomorrow)
 ```tasks
 not done

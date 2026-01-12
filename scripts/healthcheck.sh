@@ -67,7 +67,7 @@ fi
 
 task_files_count="$(find Personal/20_Tasks Work/20_Tasks -type f -name "*.md" 2>/dev/null | wc -l | tr -d ' ')"
 if [[ "$task_files_count" -gt 0 ]]; then
-  missing_checkbox="$(rg -L --glob='**/*.md' '^- \\[[ xX]\\] ' Personal/20_Tasks Work/20_Tasks 2>/dev/null || true)"
+  missing_checkbox="$(rg -L --glob='P-T-*.md' --glob='W-T-*.md' '^- \\[[ xX]\\] ' Personal/20_Tasks Work/20_Tasks 2>/dev/null || true)"
   if [[ -n "${missing_checkbox}" ]]; then
     echo "$missing_checkbox" | sed 's/^/  - /' >&2
     fail "some task files have no Tasks checkbox lines (need at least one '- [ ]')"
@@ -85,4 +85,3 @@ else
 fi
 
 echo "OK: basic structure looks good."
-
