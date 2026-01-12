@@ -1,5 +1,6 @@
 .DS_Store
 Thumbs.db
+*.base
 
 # Obsidian (machine-specific)
 .obsidian/workspace*
