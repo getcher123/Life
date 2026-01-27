@@ -100,5 +100,6 @@ Work/**
 # Work: selective allowlist (extra)
 !Work/00_Inbox/Private/
 !Work/00_Inbox/Private/README.md
+!Work/00_Inbox/Private/google-service-account.example.json
 !Work/40_Areas/W-AREA-telegram-ads.md
 !Work/50_Notes/W-NOTE-contract-template-telegram-ads-offer.md
