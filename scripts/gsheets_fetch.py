@@ -18,6 +18,17 @@ class SheetRef:
     gid: int | None
 
 
+def _is_empty_row(row: list[str]) -> bool:
+    return all((cell or "").strip() == "" for cell in row)
+
+
+def _strip_trailing_empty_rows(rows: list[list[str]]) -> list[list[str]]:
+    last = len(rows) - 1
+    while last >= 0 and _is_empty_row(rows[last]):
+        last -= 1
+    return rows[: last + 1]
+
+
 def parse_sheet_ref(sheet_url_or_id: str, gid: int | None) -> SheetRef:
     value = sheet_url_or_id.strip()
     if not value:
@@ -51,12 +62,51 @@ def load_creds_path(explicit: str | None) -> Path:
     return DEFAULT_CREDS_PATH
 
 
+def _normalize_header(header: str) -> str:
+    return re.sub(r"\s+", " ", (header or "").strip()).lower()
+
+
+def _resolve_column(headers: list[str], column: str | None) -> int | None:
+    if column is None:
+        return None
+
+    raw = column.strip()
+    if not raw:
+        return None
+
+    if raw.isdigit():
+        index = int(raw)
+        if index < 0 or index >= len(headers):
+            raise ValueError(f"Column index out of range: {index} (0..{len(headers) - 1})")
+        return index
+
+    normalized = [_normalize_header(h) for h in headers]
+    target = _normalize_header(raw)
+    for idx, value in enumerate(normalized):
+        if value == target:
+            return idx
+
+    raise ValueError(f"Column not found by name: {raw}")
+
+
+def _row_to_object(headers: list[str], row: list[str]) -> dict:
+    obj: dict[str, str] = {}
+    for idx, key in enumerate(headers):
+        value = row[idx] if idx < len(row) else ""
+        obj[key] = value
+    return obj
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Fetch data from Google Sheets using a service account (read-only by default).")
     parser.add_argument("--creds", help="Path to service account json (default: env GSHEETS_SERVICE_ACCOUNT_JSON or Work/00_Inbox/Private/google-service-account.json).")
     parser.add_argument("--sheet-url", required=True, help="Google Sheets URL or spreadsheet id.")
     parser.add_argument("--gid", type=int, help="Worksheet gid (optional; can be parsed from URL).")
     parser.add_argument("--limit", type=int, default=20, help="Max rows to print (default: 20).")
+    parser.add_argument("--tail", type=int, help="Return last N data rows (excluding header).")
+    parser.add_argument("--find", action="append", default=[], help="Find rows where value contains this text (case-insensitive). Can be used multiple times (OR).")
+    parser.add_argument("--column", help="Column name (from header) or 0-based index for --find (optional; default searches all columns).")
+    parser.add_argument("--as-objects", action="store_true", help="Output rows as objects keyed by header (JSON only).")
     parser.add_argument("--format", choices=["json", "tsv"], default="json", help="Output format (default: json).")
     parser.add_argument("--self-test", action="store_true", help="Only parse inputs and exit (no API calls).")
     args = parser.parse_args()
@@ -102,17 +152,85 @@ def main() -> int:
         print(f"Failed to fetch sheet: {exc}", file=sys.stderr)
         return 1
 
-    rows = values[: max(args.limit, 0)]
+    if not values:
+        print(json.dumps({"rows": [], "row_count_total": 0}, ensure_ascii=False))
+        return 0
+
+    headers = values[0]
+    data_rows = _strip_trailing_empty_rows(values[1:])
+
+    has_advanced = bool(args.tail is not None or args.find or args.column or args.as_objects)
+    if not has_advanced:
+        rows = values[: max(args.limit, 0)]
+        if args.format == "tsv":
+            for row in rows:
+                print("\t".join(row))
+            return 0
+
+        print(json.dumps({"rows": rows, "row_count_total": len(values)}, ensure_ascii=False))
+        return 0
+
+    try:
+        column_index = _resolve_column(headers, args.column)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    filtered = data_rows
+    if args.find:
+        needles = [needle.strip().lower() for needle in args.find if needle and needle.strip()]
+        if needles:
+            matched: list[list[str]] = []
+            for row in data_rows:
+                hay = ""
+                if column_index is None:
+                    hay = "\n".join((cell or "").lower() for cell in row)
+                else:
+                    hay = (row[column_index] if column_index < len(row) else "").lower()
+                if any(n in hay for n in needles):
+                    matched.append(row)
+            filtered = matched
+
+    if args.tail is not None:
+        tail_n = max(args.tail, 0)
+        filtered = filtered[-tail_n:] if tail_n else []
+
+    limited = filtered[: max(args.limit, 0)]
 
     if args.format == "tsv":
-        for row in rows:
+        print("\t".join(headers))
+        for row in limited:
             print("\t".join(row))
         return 0
 
-    print(json.dumps({"rows": rows, "row_count_total": len(values)}, ensure_ascii=False))
+    if args.as_objects:
+        objects = [_row_to_object(headers, row) for row in limited]
+        print(
+            json.dumps(
+                {
+                    "headers": headers,
+                    "rows": objects,
+                    "row_count_total": len(values),
+                    "matched_count": len(filtered),
+                },
+                ensure_ascii=False,
+            )
+        )
+        return 0
+
+    print(
+        json.dumps(
+            {
+                "headers": headers,
+                "rows": limited,
+                "row_count_total": len(values),
+                "matched_count": len(filtered),
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

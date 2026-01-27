@@ -19,6 +19,25 @@ tags:
 ## Private
 - Реквизиты Исполнителя (локально, не в Git): [[W-NOTE-requisites-krupiy]]
 
+## Orders (Google Sheet)
+- Таблица заказов: `https://docs.google.com/spreadsheets/d/1QleX8ziphoo6Yevy51k-UFbQYEDQkzNCfvjrmbcp5DQ/edit?gid=798172472#gid=798172472`
+- Справка по инструменту: `00_System/Google-Sheets-Tools.md`
+
+### Посмотреть последний заказ (последняя строка)
+```bash
+./scripts/gsheets_fetch.py --sheet-url "https://docs.google.com/spreadsheets/d/1QleX8ziphoo6Yevy51k-UFbQYEDQkzNCfvjrmbcp5DQ/edit?gid=798172472#gid=798172472" --gid 798172472 --tail 1 --as-objects
+```
+
+### Найти заказ по заказчику (колонка “Ваше имя”)
+```bash
+./scripts/gsheets_fetch.py --sheet-url "https://docs.google.com/spreadsheets/d/1QleX8ziphoo6Yevy51k-UFbQYEDQkzNCfvjrmbcp5DQ/edit?gid=798172472#gid=798172472" --gid 798172472 --find "Иван" --column "Ваше имя" --as-objects
+```
+
+### Найти заказ по Telegram (колонка “Ваш telegram”)
+```bash
+./scripts/gsheets_fetch.py --sheet-url "https://docs.google.com/spreadsheets/d/1QleX8ziphoo6Yevy51k-UFbQYEDQkzNCfvjrmbcp5DQ/edit?gid=798172472#gid=798172472" --gid 798172472 --find "@username" --column "Ваш telegram" --as-objects
+```
+
 ## Projects
 ```dataview
 TABLE status, updated, goal
