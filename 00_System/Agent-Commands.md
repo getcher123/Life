@@ -61,3 +61,10 @@
 ### `@Audio`
 - Скрипт: `scripts/audio2note.sh`
 - Делает: audio → заметка (и `## Summary`), затем вопросы; задачи/проекты только после подтверждения.
+
+### `@GoogleSheets`
+- Док: `00_System/Google-Sheets-Tools.md`
+- Скрипт: `scripts/gsheets_fetch.py`
+- Делает: читает Google‑таблицы через service account (креды локально, не в Git).
+
+#no-graph

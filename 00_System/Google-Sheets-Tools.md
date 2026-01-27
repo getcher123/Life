@@ -10,7 +10,19 @@ tags:
 
 # Google Sheets tools (service account)
 
-Правило: **никогда не хранить** JSON сервисного аккаунта (private key) в Git/Markdown‑заметках. Держим локально в `Work/00_Inbox/Private/`.
+Инструмент для чтения Google Sheets через **service account** (без браузера), чтобы агент мог:
+- забирать данные заказов/лидов из таблиц;
+- делать сводки/проверки/валидацию;
+- превращать строки в заметки/задачи (только после подтверждения пользователя).
+
+Правило безопасности: **никогда не хранить** JSON сервисного аккаунта (private key) в Git/Markdown‑заметках. Держим локально в `Work/00_Inbox/Private/` (gitignored).
+
+## Что делает
+- Скрипт: `scripts/gsheets_fetch.py`
+- Вход: ссылка на Google Sheet (или spreadsheet id) + `gid` листа
+- Выход: данные таблицы (JSON или TSV) для дальнейшей обработки
+
+По умолчанию используются read‑only права (`spreadsheets.readonly`).
 
 ## Подготовка (1 раз)
 1) Создай файл `Work/00_Inbox/Private/google-service-account.json` и вставь туда JSON сервисного аккаунта.  
@@ -29,9 +41,16 @@ tags:
   --limit 5
 ```
 
+## Параметры
+- `--sheet-url` — URL таблицы или `spreadsheet_id`
+- `--gid` — id листа (можно не указывать, если он есть в URL)
+- `--format json|tsv` — формат вывода (по умолчанию `json`)
+- `--creds <path>` — путь к JSON (если не стандартный)
+- `GSHEETS_SERVICE_ACCOUNT_JSON` — альтернатива `--creds`
+
 ## Примечания
 - По умолчанию креды читаются из `Work/00_Inbox/Private/google-service-account.json` или из переменной `GSHEETS_SERVICE_ACCOUNT_JSON`.
 - Если прав у сервисного аккаунта нет — будет `403` (нужно расшарить таблицу на `client_email`).
+- Если `python3-venv` недоступен, `scripts/setup-gsheets.sh` ставит зависимости в user site‑packages.
 
 #no-graph
-

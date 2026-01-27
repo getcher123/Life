@@ -50,6 +50,12 @@
 - `scripts/audio2note.sh "/path/to/audio.ogg"`
 После подтверждения (заметка + задача): `scripts/audio2note.sh "/path/to/audio.ogg" --create-task --project [[W-PROJ-...]]`
 
+## Работа с Google Sheets (service account)
+Если в запросе есть ссылка на Google‑таблицу/нужно “свериться с таблицей заказов”, агент:
+1) **не вставляет** JSON сервисного аккаунта в заметки/репозиторий;
+2) читает таблицу через `scripts/gsheets_fetch.py` (см. `00_System/Google-Sheets-Tools.md`);
+3) по умолчанию делает только чтение/проверку/сводку; создание задач/проектов — после подтверждения пользователя.
+
 ## Режимы работы агента (выбери один на запрос)
 Если агент поддерживает “роли”, используй промпты из `00_System/Prompts/` (Router/Assistant/Coach/Repo‑Maintainer).
 
@@ -108,3 +114,5 @@
 
 ## Непрерывная поддержка (support)
 Смотри протоколы: `00_System/Support.md` и регламенты: `00_System/Routines.md`.
+
+#no-graph
