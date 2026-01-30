@@ -74,6 +74,7 @@ Work/**
 !Work/10_Daily/README.md
 !Work/20_Tasks/
 !Work/20_Tasks/00_Taskboard.md
+!Work/20_Tasks/00_Kanban.md
 !Work/20_Tasks/README.md
 !Work/30_Projects/
 !Work/30_Projects/00_Projects.md
@@ -103,3 +104,6 @@ Work/**
 !Work/00_Inbox/Private/google-service-account.example.json
 !Work/40_Areas/W-AREA-telegram-ads.md
 !Work/50_Notes/W-NOTE-contract-template-telegram-ads-offer.md
+!Work/50_Notes/W-NOTE-docx-20260130-kl-hop-on-hop-off.md
+!Work/30_Projects/W-PROJ-amway-kl-hop-on-hop-off.md
+!Work/20_Tasks/W-T-20260130-amway-kl-hop-on-hop-off.md
