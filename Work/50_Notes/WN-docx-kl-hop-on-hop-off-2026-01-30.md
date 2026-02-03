@@ -4,8 +4,8 @@ domain: work
 created: 2026-01-30
 updated: 2026-01-30
 source_docx: "//mnt/c/Users/Ivan/Downloads/Автобусный тур KL Hop-On Hop-Off.docx"
-project: "[[W-PROJ-amway-kl-hop-on-hop-off]]"
-task: "[[W-T-20260130-amway-kl-hop-on-hop-off]]"
+project: "[[WP-amway-kl-hop-on-hop-off]]"
+task: "[[WT-amway-kl-hop-on-hop-off-2026-01-30]]"
 tags:
   - note
   - docx
@@ -14,8 +14,8 @@ tags:
 # Автобусный тур KL Hop-On Hop-Off
 
 - Источник: `//mnt/c/Users/Ivan/Downloads/Автобусный тур KL Hop-On Hop-Off.docx`
-- Проект: [[W-PROJ-amway-kl-hop-on-hop-off]]
-- Задача: [[W-T-20260130-amway-kl-hop-on-hop-off]]
+- Проект: [[WP-amway-kl-hop-on-hop-off]]
+- Задача: [[WT-amway-kl-hop-on-hop-off-2026-01-30]]
 
 ## Summary
 
@@ -28,9 +28,9 @@ tags:
 - Оформление: KV LTS Malaysia (Drive‑папка выше).
 - Логотип: только “цветок Malaysia’26”.
 - Контент: 27 остановок, к каждой — фото по названию.
-- Запросы для поиска фото (CSV): [[Work/90_Assets/W-NOTE-docx-20260130-kl-hop-on-hop-off/stops_shutterstock_queries.csv|stops_shutterstock_queries.csv]]
+- Запросы для поиска фото (CSV): [[Work/90_Assets/WN-docx-kl-hop-on-hop-off-2026-01-30/stops_shutterstock_queries.csv|stops_shutterstock_queries.csv]]
 - Тексты на всех языках: Drive‑папка выше.
-- Доступ к Shutterstock: хранить локально в приватной заметке [[W-NOTE-amway-shutterstock]] (не в Git).
+- Доступ к Shutterstock: хранить локально в приватной заметке [[WN-amway-shutterstock-2026-01-30]] (не в Git).
 
 ---
 

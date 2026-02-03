@@ -13,6 +13,10 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Python
+__pycache__/
+*.pyc
+
 # Local tools (keep binaries out of git)
 .pandoc_local/
 .poppler_shim/
@@ -102,9 +106,10 @@ Work/**
 !Work/00_Inbox/Private/
 !Work/00_Inbox/Private/README.md
 !Work/00_Inbox/Private/google-service-account.example.json
-!Work/40_Areas/W-AREA-telegram-ads.md
-!Work/50_Notes/W-NOTE-contract-template-telegram-ads-offer.md
-!Work/50_Notes/W-NOTE-docx-20260130-kl-hop-on-hop-off.md
-!Work/50_Notes/W-NOTE-20260130-nda-template-design-projects.md
-!Work/30_Projects/W-PROJ-amway-kl-hop-on-hop-off.md
-!Work/20_Tasks/W-T-20260130-amway-kl-hop-on-hop-off.md
+!Work/40_Areas/WA-telegram-ads.md
+!Work/50_Notes/WN-contract-template-telegram-ads-offer-2026-01-27.md
+!Work/50_Notes/WN-docx-kl-hop-on-hop-off-2026-01-30.md
+!Work/50_Notes/WN-nda-template-design-projects-2026-01-30.md
+!Work/30_Projects/WP-amway-kl-hop-on-hop-off.md
+!Work/20_Tasks/WT-amway-kl-hop-on-hop-off-2026-01-30.md
+!Work/30_Projects/WP-bootstrap-life-vault.md

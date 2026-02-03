@@ -12,14 +12,14 @@
 - Inbox: `Work/00_Inbox/`
 
 ## Bootstrap
-- `[[W-GOAL-bootstrap-life-vault|Bootstrap: рабочая система заметок/задач]]`
-- `[[W-PROJ-bootstrap-life-vault]]`
+- `[[WG-bootstrap-life-vault|Bootstrap: рабочая система заметок/задач]]`
+- `[[WP-bootstrap-life-vault]]`
 - `[[Work/70_Reviews/weekly/2026-W03|Weekly review (Work) — 2026-01-12]]`
 
 ## Current focus
-- `[[W-GOAL-2026-w03-deliverables|Deliverables недели (Work) — 2026-W03]]`
-- `[[W-PROJ-f3-interface-mockups|Ф3: мокапы новых интерфейсов]]`
-- `[[W-PROJ-bi-core-xp-historic-inputs|BI core XP: проверить вводные по историке и запустить проект]]`
+- `[[WG-2026-w03-deliverables|Deliverables недели (Work) — 2026-W03]]`
+- `[[WP-f3-interface-mockups|Ф3: мокапы новых интерфейсов]]`
+- `[[WP-bi-core-xp-historic-inputs|BI core XP: проверить вводные по историке и запустить проект]]`
 
 ## Urgent (due before tomorrow)
 ```tasks

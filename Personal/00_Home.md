@@ -12,8 +12,8 @@
 - Inbox: `Personal/00_Inbox/`
 
 ## Bootstrap
-- `[[P-GOAL-personal-system-running|Личный контур: система задач/заметок работает]]`
-- `[[P-PROJ-personal-system-bootstrap|Личный bootstrap системы]]`
+- `[[PG-personal-system-running|Личный контур: система задач/заметок работает]]`
+- `[[PP-personal-system-bootstrap|Личный bootstrap системы]]`
 - `[[Personal/70_Reviews/weekly/2026-W03|Weekly review (Personal) — 2026-01-12]]`
 
 ## Urgent (due before tomorrow)

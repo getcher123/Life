@@ -14,10 +14,10 @@ tags:
 - Рекламные размещения в Telegram: договорённости, счёта‑оферты, маркировка (ERID/ОРД/ЕРИР), закрывающие документы.
 
 ## Templates
-- Договор по умолчанию: [[W-NOTE-contract-template-telegram-ads-offer]]
+- Договор по умолчанию: [[WN-contract-template-telegram-ads-offer-2026-01-27]]
 
 ## Private
-- Реквизиты Исполнителя (локально, не в Git): [[W-NOTE-requisites-krupiy]]
+- Реквизиты Исполнителя (локально, не в Git): [[WN-requisites-krupiy-2026-01-27]]
 
 ## Orders (Google Sheet)
 - Таблица заказов: `https://docs.google.com/spreadsheets/d/1QleX8ziphoo6Yevy51k-UFbQYEDQkzNCfvjrmbcp5DQ/edit?gid=798172472#gid=798172472`

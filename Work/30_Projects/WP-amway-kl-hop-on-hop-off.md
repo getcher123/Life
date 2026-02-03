@@ -15,25 +15,25 @@ tags:
 - Для каждой из 27 остановок подобрано фото по названию и вставлено в макет.
 
 ## Notes
-- Входящий DOCX (рабочая копия): [[W-NOTE-docx-20260130-kl-hop-on-hop-off]]
+- Входящий DOCX (рабочая копия): [[WN-docx-kl-hop-on-hop-off-2026-01-30]]
 - KV LTS Malaysia (оформление): `https://drive.google.com/drive/folders/1_EmWRkMdQH7wbhXlBz4HMdiygDQNFwNw?usp=sharing`
 - Тексты на всех языках: `https://drive.google.com/drive/folders/1G42GqfSH9jk2fmx2NFWEd12VzRGNYGRR?usp=sharing`
 - Логотип: только “цветок Malaysia’26” (без “A”).
-- Связанный Amway‑проект: [[W-PROJ-amway-malaysia-brochure]]
+- Связанный Amway‑проект: [[WP-amway-malaysia-brochure]]
 
 ## Tasks (open)
-> Привязывай задачи к этому проекту, добавляя ссылку `[[W-PROJ-amway-kl-hop-on-hop-off|Amway: KL Hop-On Hop-Off]]` в строку задачи.
+> Привязывай задачи к этому проекту, добавляя ссылку `[[WP-amway-kl-hop-on-hop-off|Amway: KL Hop-On Hop-Off]]` в строку задачи.
 
 ```tasks
 not done
 path includes Work/20_Tasks
-description regex matches /\[\[W-PROJ-amway-kl-hop-on-hop-off(\|[^\]]+)?\]\]/
+description regex matches /\[\[WP-amway-kl-hop-on-hop-off(\|[^\]]+)?\]\]/
 ```
 
 ## Tasks (done, last week)
 ```tasks
 done last week
 path includes Work/20_Tasks
-description regex matches /\[\[W-PROJ-amway-kl-hop-on-hop-off(\|[^\]]+)?\]\]/
+description regex matches /\[\[WP-amway-kl-hop-on-hop-off(\|[^\]]+)?\]\]/
 ```
 
