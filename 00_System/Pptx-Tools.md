@@ -15,7 +15,7 @@ scripts/pptx2note.sh "/path/to/deck.pptx" --domain work
 Опционально привязать к проекту:
 
 ```bash
-scripts/pptx2note.sh "/path/to/deck.pptx" --domain work --project [[W-PROJ-...]]
+scripts/pptx2note.sh "/path/to/deck.pptx" --domain work --project [[WP-...]]
 ```
 
 ## Incoming (drop folder)

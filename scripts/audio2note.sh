@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: audio2note.sh INPUT_AUDIO [--domain work|personal] [--project [[W-PROJ-...]]] [--note-file PATH] [--create-task] [--task-file PATH] [--force]
+Usage: audio2note.sh INPUT_AUDIO [--domain work|personal] [--project [[WP-...]]] [--note-file PATH] [--create-task] [--task-file PATH] [--force]
 
 Transcribes an audio file (ogg/mp3/wav/m4a/...) via OpenAI Whisper API and writes:
   - a note in */50_Notes/ (always)
@@ -13,7 +13,7 @@ Requires OPENAI_API_KEY in environment or in repo .env (ignored by git).
 
 Example:
   scripts/audio2note.sh "/mnt/c/Users/Ivan/Downloads/audio.ogg"
-  scripts/audio2note.sh "/mnt/c/Users/Ivan/Downloads/audio.ogg" --create-task --project [[W-PROJ-...]]
+  scripts/audio2note.sh "/mnt/c/Users/Ivan/Downloads/audio.ogg" --create-task --project [[WP-...]]
 EOF
 }
 
@@ -113,7 +113,7 @@ if ! command -v rg >/dev/null 2>&1; then
 fi
 
 today_iso="$(date +%F)"
-today_compact="$(date +%Y%m%d)"
+today_filename="$today_iso"
 
 base="$(basename "$input")"
 base_no_ext="${base%.*}"
@@ -127,10 +127,10 @@ if [[ -z "$slug" ]]; then
   slug="audio"
 fi
 
-note_name="${domain_prefix}-NOTE-audio-${today_compact}-${slug}"
+note_name="${domain_prefix}N-audio-${slug}-${today_filename}"
 note_path_default="${domain_dir}/50_Notes/${note_name}.md"
 
-task_name_default="${domain_prefix}-T-${today_compact}-process-audio-${slug}"
+task_name_default="${domain_prefix}T-process-audio-${slug}-${today_filename}"
 task_path_default="${domain_dir}/20_Tasks/${task_name_default}.md"
 
 if [[ -n "$note_file" ]]; then

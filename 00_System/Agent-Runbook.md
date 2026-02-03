@@ -20,7 +20,7 @@
 3) только после подтверждения пользователя — создавать задачи/проекты и связывать их с заметкой.
 
 Рекомендуемый способ (только заметка): `scripts/docx2note.sh "/path/to/input.docx"`
-После подтверждения (заметка + задача): `scripts/docx2note.sh "/path/to/input.docx" --create-task --project [[W-PROJ-...]]`
+После подтверждения (заметка + задача): `scripts/docx2note.sh "/path/to/input.docx" --create-task --project [[WP-...]]`
 
 1. Проверка `pandoc`:
    - если `pandoc` есть в `PATH`, можно сразу конвертировать;
@@ -32,7 +32,7 @@
 2.1. DOCX → заметка (по умолчанию):
    - `scripts/docx2note.sh "/path/to/input.docx"`
 2.2. DOCX → заметка + задача (только после подтверждения пользователя):
-   - `scripts/docx2note.sh "/path/to/input.docx" --create-task --project [[W-PROJ-...]]`
+   - `scripts/docx2note.sh "/path/to/input.docx" --create-task --project [[WP-...]]`
 3. Markdown → DOCX (если нужно вернуть документ):
    - `scripts/md2docx.sh "Work/50_Notes/<name>.md" "/path/to/output.docx"`
 4. Правила:
@@ -48,7 +48,7 @@
 
 Команда:
 - `scripts/audio2note.sh "/path/to/audio.ogg"`
-После подтверждения (заметка + задача): `scripts/audio2note.sh "/path/to/audio.ogg" --create-task --project [[W-PROJ-...]]`
+После подтверждения (заметка + задача): `scripts/audio2note.sh "/path/to/audio.ogg" --create-task --project [[WP-...]]`
 
 ## Работа с Google Sheets (service account)
 Если в запросе есть ссылка на Google‑таблицу/нужно “свериться с таблицей заказов”, агент:
@@ -80,7 +80,7 @@
    - цели (если это про направление) в `*/60_Goals/`;
    - проекты (если это про результат) в `*/30_Projects/`;
    - задачи (если это про действия) в `*/20_Tasks/`.
-3. Для задач проекта/цели: добавь в строку задачи ссылки `[[W-PROJ-...]]` / `[[W-GOAL-...]]` (или personal‑аналог).
+3. Для задач проекта/цели: добавь в строку задачи ссылки `[[WP-...]]` / `[[WG-...]]` (или personal‑аналог).
 4. Для задач с датой: используй свойства Tasks в строке (`📅`, `⏳`, `🛫`).
 
 ### D) Coach (коучинг по целям)

@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: pptx2note.sh INPUT.pptx [--domain work|personal] [--project [[W-PROJ-...]]] [--note-file PATH] [--force]
+Usage: pptx2note.sh INPUT.pptx [--domain work|personal] [--project [[WP-...]]] [--note-file PATH] [--force]
 
 Extracts text from a PPTX and creates a Markdown note in */50_Notes/ with:
   - Summary placeholder
@@ -77,7 +77,7 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 
 today_iso="$(date +%F)"
-today_compact="$(date +%Y%m%d)"
+today_filename="$today_iso"
 
 base="$(basename "$input")"
 base_no_ext="${base%.*}"
@@ -91,7 +91,7 @@ if [[ -z "$slug" ]]; then
   slug="pptx"
 fi
 
-note_name="${domain_prefix}-NOTE-pptx-${today_compact}-${slug}"
+note_name="${domain_prefix}N-pptx-${slug}-${today_filename}"
 note_path_default="${domain_dir}/50_Notes/${note_name}.md"
 
 if [[ -n "$note_file" ]]; then

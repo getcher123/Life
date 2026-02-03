@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: process-incoming.sh [--domain work|personal] [--project [[W-PROJ-...]]]
+Usage: process-incoming.sh [--domain work|personal] [--project [[WP-...]]]
 
 Scans */00_Inbox/Incoming for binary files and converts:
   - .docx -> note via scripts/docx2note.sh (note only)
@@ -15,7 +15,7 @@ No tasks/projects are created by this script (confirmation step happens later).
 
 Examples:
   scripts/process-incoming.sh --domain work
-  scripts/process-incoming.sh --domain work --project [[W-PROJ-amway-malaysia-brochure]]
+  scripts/process-incoming.sh --domain work --project [[WP-amway-malaysia-brochure]]
 EOF
 }
 

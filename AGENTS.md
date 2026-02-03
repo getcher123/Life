@@ -20,11 +20,11 @@
 - Шаблоны/правила: `00_System/`.
 
 ## Именование файлов (канонично)
-- Личные: `P-...`, рабочие: `W-...` (чтобы `[[...]]` были уникальными).
-- Задачи: `P-T-YYYYMMDD-<slug>.md`, `W-T-YYYYMMDD-<slug>.md`.
-- Проекты: `P-PROJ-<slug>.md`, `W-PROJ-<slug>.md`.
-- Области: `P-AREA-<slug>.md`, `W-AREA-<slug>.md`.
-- Цели: `P-GOAL-<slug>.md`, `W-GOAL-<slug>.md`.
+- Личные: `P*`, рабочие: `W*` (чтобы `[[...]]` были уникальными).
+- Задачи: `PT-<slug>-YYYY-MM-DD.md`, `WT-<slug>-YYYY-MM-DD.md`.
+- Проекты: `PP-<slug>.md`, `WP-<slug>.md`.
+- Области: `PA-<slug>.md`, `WA-<slug>.md`.
+- Цели: `PG-<slug>.md`, `WG-<slug>.md`.
 - Еженедельные обзоры: `YYYY/YYYY-Www.md` внутри `70_Reviews/`.
 
 ## Шаблоны

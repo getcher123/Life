@@ -37,13 +37,13 @@ scripts/docx2note.sh "/path/to/input.docx"
 Опционально можно привязать к проекту:
 
 ```bash
-scripts/docx2note.sh "/path/to/input.docx" --project [[W-PROJ-...]]
+scripts/docx2note.sh "/path/to/input.docx" --project [[WP-...]]
 ```
 
 Задачу создавать только после подтверждения (когда решено, что именно нужно сделать):
 
 ```bash
-scripts/docx2note.sh "/path/to/input.docx" --create-task --project [[W-PROJ-...]]
+scripts/docx2note.sh "/path/to/input.docx" --create-task --project [[WP-...]]
 ```
 
 ## 3) PATH (опционально)

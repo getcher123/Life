@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: docx2note.sh INPUT.docx [--domain work|personal] [--project [[W-PROJ-...]]] [--note-file PATH] [--create-task] [--task-file PATH] [--force]
+Usage: docx2note.sh INPUT.docx [--domain work|personal] [--project [[WP-...]]] [--note-file PATH] [--create-task] [--task-file PATH] [--force]
 
 Converts a DOCX file to a Markdown note in the vault and creates (or links) a task
 that references the note (optional).
@@ -12,7 +12,7 @@ Defaults:
   --domain work
 
 Example:
-  scripts/docx2note.sh "/mnt/c/Users/Ivan/Downloads/Contract.docx" --project [[W-PROJ-contract-...]]
+  scripts/docx2note.sh "/mnt/c/Users/Ivan/Downloads/Contract.docx" --project [[WP-contract-...]]
 EOF
 }
 
@@ -93,7 +93,7 @@ else
 fi
 
 today_iso="$(date +%F)"
-today_compact="$(date +%Y%m%d)"
+today_filename="$today_iso"
 
 base="$(basename "$input")"
 base_no_ext="${base%.*}"
@@ -107,10 +107,10 @@ if [[ -z "$slug" ]]; then
   slug="docx"
 fi
 
-note_name="${domain_prefix}-NOTE-docx-${today_compact}-${slug}"
+note_name="${domain_prefix}N-docx-${slug}-${today_filename}"
 note_path_default="${domain_dir}/50_Notes/${note_name}.md"
 
-task_name_default="${domain_prefix}-T-${today_compact}-review-docx-${slug}"
+task_name_default="${domain_prefix}T-review-docx-${slug}-${today_filename}"
 task_path_default="${domain_dir}/20_Tasks/${task_name_default}.md"
 
 if [[ -n "$note_file" ]]; then
