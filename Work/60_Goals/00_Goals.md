@@ -7,3 +7,4 @@ WHERE type = "goal"
 SORT updated DESC
 ```
 
+#no-graph

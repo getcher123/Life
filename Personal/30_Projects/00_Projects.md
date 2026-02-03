@@ -7,3 +7,4 @@ WHERE type = "project"
 SORT status ASC, updated DESC
 ```
 
+#no-graph

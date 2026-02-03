@@ -19,18 +19,17 @@ tags:
 - <контекст/ссылки/риски>
 
 ## Tasks (open)
-> Привязывай задачи к этому проекту, добавляя ссылку `[[{{query.file.filenameWithoutExtension}}]]` в строку задачи.
+> Привязывай задачи к этому проекту, добавляя ссылку `[[{{query.file.filenameWithoutExtension}}|человеческое название]]` в строку задачи.
 
 ```tasks
 not done
 path includes Personal/20_Tasks
-description includes [[{{query.file.filenameWithoutExtension}}]]
+description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)?\]\]/
 ```
 
 ## Tasks (done, last week)
 ```tasks
 done last week
 path includes Personal/20_Tasks
-description includes [[{{query.file.filenameWithoutExtension}}]]
+description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)?\]\]/
 ```
-

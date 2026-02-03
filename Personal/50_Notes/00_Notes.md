@@ -7,3 +7,4 @@ WHERE type = "note"
 SORT updated DESC
 ```
 
+#no-graph

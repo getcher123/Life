@@ -8,6 +8,8 @@ SORT file.name DESC
 ```
 
 ## Регламент
-- Onboarding: `[[00_System/Onboarding]]`
-- Рутины: `[[00_System/Routines]]`
-- Runbook агента: `[[00_System/Agent-Runbook]]`
+- Onboarding: `[[00_System/Onboarding|Onboarding (первая настройка)]]`
+- Рутины: `[[00_System/Routines|Регламенты рутины (чтобы система работала)]]`
+- Runbook агента: `[[00_System/Agent-Runbook|Runbook для AI‑агента]]`
+
+#no-graph

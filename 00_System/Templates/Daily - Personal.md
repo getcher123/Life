@@ -40,4 +40,3 @@ scheduled today
 
 ## Reflection
 - <что сработало/что улучшить>
-

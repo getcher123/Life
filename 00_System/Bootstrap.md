@@ -41,3 +41,4 @@ Bootstrap завершён, если:
 - На каждой “сессии” агент выполняет лёгкий healthcheck (см. `00_System/Support.md`).
 - Раз в неделю агент инициирует review по шаблону и помогает держать связи goal↔project↔task.
 
+#no-graph

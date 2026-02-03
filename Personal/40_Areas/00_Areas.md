@@ -7,3 +7,4 @@ WHERE type = "area"
 SORT updated DESC
 ```
 
+#no-graph

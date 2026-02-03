@@ -4,3 +4,4 @@
 
 Рекомендуемый шаблон: `00_System/Templates/Goal - Work.md`.
 
+#no-graph

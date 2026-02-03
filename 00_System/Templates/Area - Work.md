@@ -20,4 +20,3 @@ FROM "Work/30_Projects"
 WHERE type = "project" AND area = this.file.link
 SORT updated DESC
 ```
-

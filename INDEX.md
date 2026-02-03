@@ -13,3 +13,5 @@
 - Support (поддержка): `[[00_System/Support]]`
 - Runbook агента: `[[00_System/Agent-Runbook]]`
 - Prompts ролей: `[[00_System/Prompts/README]]`
+
+#no-graph

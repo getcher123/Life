@@ -32,6 +32,7 @@ class Settings:
     chatgpt_schema_path: str
     pdf_vision_prompt_path: str
     pdf_vision_schema_path: str
+    pdf_md_prompt_path: str
     results_dir: str
     poppler_path: str | None
 
@@ -62,6 +63,10 @@ def get_settings() -> Settings:
         pdf_vision_schema_path=os.getenv(
             "PDF_VISION_SCHEMA_PATH",
             str(config_dir / "pdf_vision_schema.json"),
+        ),
+        pdf_md_prompt_path=os.getenv(
+            "PDF_MD_PROMPT_PATH",
+            str(config_dir / "pdf_md_prompt.txt"),
         ),
         results_dir=os.getenv("RESULTS_DIR", "data/results"),
         poppler_path=os.getenv("POPPLER_PATH"),
@@ -282,9 +287,71 @@ def analyze_page_image(
     return page_payload
 
 
+def render_page_markdown(
+    image_path: str,
+    *,
+    prompt_path: str,
+    model: str,
+) -> str:
+    image_file = Path(image_path)
+    if not image_file.exists() or not image_file.is_file():
+        raise PipelineError(f"Image not found: {image_path}")
+
+    suffix = image_file.suffix.lstrip(".").lower()
+    if suffix == "jpg":
+        suffix = "jpeg"
+    mime = {
+        "png": "image/png",
+        "jpeg": "image/jpeg",
+    }.get(suffix)
+    if not mime:
+        raise PipelineError(f"Unsupported image format: {image_file.suffix}")
+
+    prompt = _read_text(prompt_path)
+    settings = get_settings()
+    client = _get_openai_client(settings.openai_api_key)
+
+    try:
+        data = image_file.read_bytes()
+    except Exception as exc:  # noqa: BLE001
+        raise PipelineError(f"Failed to read image: {exc}") from exc
+
+    encoded = base64.b64encode(data).decode("ascii")
+
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": prompt},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": "Return Markdown for this page only."},
+                        {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{encoded}"}},
+                    ],
+                },
+            ],
+            temperature=0,
+        )
+    except Exception as exc:  # noqa: BLE001
+        raise PipelineError(f"OpenAI markdown request failed: {exc}") from exc
+
+    try:
+        content = response.choices[0].message.content
+    except Exception as exc:  # noqa: BLE001
+        raise PipelineError(f"Malformed OpenAI markdown response: {exc}") from exc
+
+    return (content or "").strip()
+
+
 def _write_json(path: Path, data: Any) -> None:
     ensure_dir(path.parent)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _write_text(path: Path, text: str) -> None:
+    ensure_dir(path.parent)
+    path.write_text(text, encoding="utf-8")
 
 
 def run_pipeline(
@@ -296,8 +363,10 @@ def run_pipeline(
     poppler_path: str | None = None,
     prompt_path: str | None = None,
     schema_path: str | None = None,
-    model: str | None = None,
     save_pages: bool = False,
+    emit_md: bool = False,
+    emit_text: bool = False,
+    md_prompt_path: str | None = None,
 ) -> Path:
     settings = get_settings()
 
@@ -324,7 +393,7 @@ def run_pipeline(
 
     prompt_final = prompt_path or settings.pdf_vision_prompt_path
     schema_final = schema_path or settings.pdf_vision_schema_path
-    vision_model = model or settings.openai_vision_model
+    vision_model = settings.openai_vision_model
 
     page_payloads: list[dict[str, Any]] = []
     out_dir = results_dir
@@ -347,6 +416,31 @@ def run_pipeline(
     combined_path = out_dir / "pdf_pages_combined.json"
     _write_json(combined_path, page_payloads)
 
+    if emit_text:
+        lines: list[str] = []
+        for idx, page in enumerate(page_payloads, start=1):
+            lines.append(f"=== Page {idx} ===")
+            lines.extend(page.get("raw_lines", []))
+            lines.append("")
+        text_payload = "\n".join(lines).rstrip() + "\n"
+        _write_text(out_dir / "pdf_pages_combined.txt", text_payload)
+
+    if emit_md:
+        md_prompt_final = md_prompt_path or settings.pdf_md_prompt_path
+        md_model_final = vision_model
+        md_pages: list[str] = []
+        for idx, image_path in enumerate(page_images, start=1):
+            page_md = render_page_markdown(
+                image_path,
+                prompt_path=md_prompt_final,
+                model=md_model_final,
+            )
+            if page_md:
+                md_pages.append(f"## Page {idx}\n\n{page_md}\n")
+            else:
+                md_pages.append(f"## Page {idx}\n\n")
+        _write_text(out_dir / "pdf_pages_combined.md", "\n".join(md_pages).rstrip() + "\n")
+
     elapsed_ms = int((time.perf_counter() - start_ts) * 1000)
     logger.info("pipeline.done", extra={"elapsed_ms": elapsed_ms, "output": str(combined_path)})
     return combined_path
@@ -363,7 +457,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--poppler-path", help="Override POPPLER_PATH")
     parser.add_argument("--prompt-path", help="Override vision prompt path")
     parser.add_argument("--schema-path", help="Override vision schema path")
-    parser.add_argument("--model", help="Override vision model")
+    parser.add_argument("--emit-text", action="store_true", help="Write plain text output")
+    parser.add_argument("--emit-md", action="store_true", help="Write Markdown output")
+    parser.add_argument("--md-prompt-path", help="Override markdown prompt path")
     parser.add_argument("--save-pages", action="store_true", help="Save per-page JSON files")
     parser.add_argument("--log-level", default="INFO", help="Logging level")
     return parser
@@ -413,8 +509,10 @@ def main() -> int:
             poppler_path=args.poppler_path,
             prompt_path=args.prompt_path,
             schema_path=args.schema_path,
-            model=args.model,
             save_pages=args.save_pages,
+            emit_md=args.emit_md,
+            emit_text=args.emit_text,
+            md_prompt_path=args.md_prompt_path,
         )
     except PipelineError as exc:
         print(f"Pipeline failed: {exc}", file=sys.stderr)

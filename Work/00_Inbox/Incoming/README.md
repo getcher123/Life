@@ -10,3 +10,5 @@
 
 Команда агента:
 - `scripts/process-incoming.sh --domain work`
+
+#no-graph

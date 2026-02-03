@@ -30,11 +30,10 @@ SORT updated DESC
 ```
 
 ## Tasks (open)
-> Привязывай задачи к этой цели, добавляя ссылку `[[{{query.file.filenameWithoutExtension}}]]` в строку задачи.
+> Привязывай задачи к этой цели, добавляя ссылку `[[{{query.file.filenameWithoutExtension}}|человеческое название]]` в строку задачи.
 
 ```tasks
 not done
 path includes Personal/20_Tasks
-description includes [[{{query.file.filenameWithoutExtension}}]]
+description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)?\]\]/
 ```
-

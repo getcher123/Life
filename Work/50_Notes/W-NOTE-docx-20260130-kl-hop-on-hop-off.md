@@ -28,6 +28,7 @@ tags:
 - Оформление: KV LTS Malaysia (Drive‑папка выше).
 - Логотип: только “цветок Malaysia’26”.
 - Контент: 27 остановок, к каждой — фото по названию.
+- Запросы для поиска фото (CSV): [[Work/90_Assets/W-NOTE-docx-20260130-kl-hop-on-hop-off/stops_shutterstock_queries.csv|stops_shutterstock_queries.csv]]
 - Тексты на всех языках: Drive‑папка выше.
 - Доступ к Shutterstock: хранить локально в приватной заметке [[W-NOTE-amway-shutterstock]] (не в Git).
 

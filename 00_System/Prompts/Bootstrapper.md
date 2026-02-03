@@ -47,3 +47,4 @@
 1. Предложи ближайший daily/weekly цикл (см. `00_System/Routines.md`).
 2. Включи режим Repo‑Maintainer для дальнейших запросов и healthcheck.
 
+#no-graph
