@@ -81,6 +81,8 @@ case "$domain" in
 esac
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT_DIR/scripts/lib_vault_naming.sh"
+vault_load_naming_config "$ROOT_DIR"
 
 load_api_key_from_dotenv() {
   local env_file="$ROOT_DIR/.env"
@@ -118,14 +120,7 @@ today_filename="$today_iso"
 base="$(basename "$input")"
 base_no_ext="${base%.*}"
 
-slug_raw="$base_no_ext"
-if command -v iconv >/dev/null 2>&1; then
-  slug_raw="$(printf "%s" "$slug_raw" | iconv -c -f UTF-8 -t ASCII//TRANSLIT || printf "%s" "$slug_raw")"
-fi
-slug="$(printf "%s" "$slug_raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
-if [[ -z "$slug" ]]; then
-  slug="audio"
-fi
+slug="$(vault_slugify_tech_id "$base_no_ext" "audio")"
 
 note_name="${domain_prefix}N-audio-${slug}-${today_filename}"
 note_path_default="${domain_dir}/50_Notes/${note_name}.md"
@@ -221,12 +216,31 @@ if [[ "${create_task}" == "1" && ! -f "$task_path" ]]; then
     echo "  - task"
     echo "---"
     echo
-    echo "- [ ] Обработать расшифровку аудио: ${note_link} (выделить задачи/решения, разнести по проектам) #task"
+    echo "# Разобрать расшифровку аудио"
+    echo
+    echo "## Next step"
+    echo "- [ ] Обработать расшифровку аудио: ${note_link} (выделить задачи/решения, разнести по проектам)"
+    echo
+    echo "- [ ] Подготовить разбор аудио и список задач/решений по ${note_link}"
+    echo
+    echo "## Checklist"
+    echo "- [ ] Выделить задачи / решения / вопросы"
+    echo "- [ ] Привязать к проектам/целям (при подтверждении пользователя)"
+    echo
+    echo "## Context / Links"
+    echo "- Note: ${note_link}"
+    if [[ -n "${project_link}" ]]; then
+      echo "- Project: ${project_link}"
+    fi
+    echo
+    echo "## Планирование (Tasks)"
+    echo "Добавляй свойства в строку задачи по необходимости: ⏳ / 🛫 / 📅 / ✅."
   } >"$task_path"
 fi
 
 echo "OK:"
 echo "  note: $note_path"
+echo "  tech-id-language: ${VAULT_TECH_ID_LANGUAGE}"
 if [[ "${create_task}" == "1" ]]; then
   echo "  task: $task_path"
 fi

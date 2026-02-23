@@ -31,3 +31,5 @@ due next week
 
 ## Plan
 - <3–5 приоритетов>
+
+#no-graph

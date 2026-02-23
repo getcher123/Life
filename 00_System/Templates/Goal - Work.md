@@ -30,10 +30,19 @@ SORT updated DESC
 ```
 
 ## Tasks (open)
-> Привязывай задачи к этой цели, добавляя ссылку `[[{{query.file.filenameWithoutExtension}}|человеческое название]]` в строку задачи.
+%% Для автоподборки задач добавляй ссылку на цель в строку задачи (используй короткий алиас). %%
 
 ```tasks
 not done
 path includes Work/20_Tasks
 description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)?\]\]/
+sort by due
+sort by priority
+hide backlinks
+hide tags
+hide edit button
+hide postpone button
+hide task count
 ```
+
+#no-graph

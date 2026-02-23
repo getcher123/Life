@@ -40,3 +40,5 @@ scheduled today
 
 ## Reflection
 - <что сработало/что улучшить>
+
+#no-graph

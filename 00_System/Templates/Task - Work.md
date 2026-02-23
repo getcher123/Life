@@ -4,14 +4,39 @@ domain: work
 status: todo
 created: {{date:YYYY-MM-DD}}
 updated: {{date:YYYY-MM-DD}}
-area:
-project:
-goal:
+# Optional links (add only if relevant; don't keep empty fields):
+# project: "[[WP-...|Название проекта]]"
+# goal: "[[WG-...|Название цели]]"
+# note: "[[WN-...|Связанная заметка]]"
+# priority: high | medium | low
 tags:
   - task
 ---
 
-- [ ] <описание задачи> #task
+# <Человеческий заголовок задачи>
+
+## Next step
+- [ ] <первый конкретный шаг>
+
+- [ ] <описание deliverable-задачи> [[WP-...|Название проекта]] 📅 {{date:YYYY-MM-DD}}
+
+## Checklist
+- [ ] <шаг 1>
+- [ ] <шаг 2>
+
+## Deliverables
+- <что должно быть на выходе>
+
+## Context / Links
+- Project: [[WP-...|Название проекта]]
+- Goal: [[WG-...|Название цели]]
+- Note: [[WN-...|Связанная заметка]]
+
+## Blockers
+- <если есть; иначе удалить секцию>
 
 ## Планирование (Tasks)
 Добавляй даты/свойства прямо в строку задачи (по необходимости): `⏳` (scheduled), `🛫` (start), `📅` (due), `✅` (done).
+Ссылки в строке задачи добавляй с “человеческими” алиасами (`[[WP-...|...]]`, `[[WG-...|...]]`).
+
+#no-graph

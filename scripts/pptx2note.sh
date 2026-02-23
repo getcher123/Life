@@ -71,6 +71,10 @@ case "$domain" in
     ;;
 esac
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT_DIR/scripts/lib_vault_naming.sh"
+vault_load_naming_config "$ROOT_DIR"
+
 if ! command -v python3 >/dev/null 2>&1; then
   echo "python3 is required but not found." >&2
   exit 1
@@ -82,14 +86,7 @@ today_filename="$today_iso"
 base="$(basename "$input")"
 base_no_ext="${base%.*}"
 
-slug_raw="$base_no_ext"
-if command -v iconv >/dev/null 2>&1; then
-  slug_raw="$(printf "%s" "$slug_raw" | iconv -c -f UTF-8 -t ASCII//TRANSLIT || printf "%s" "$slug_raw")"
-fi
-slug="$(printf "%s" "$slug_raw" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
-if [[ -z "$slug" ]]; then
-  slug="pptx"
-fi
+slug="$(vault_slugify_tech_id "$base_no_ext" "pptx")"
 
 note_name="${domain_prefix}N-pptx-${slug}-${today_filename}"
 note_path_default="${domain_dir}/50_Notes/${note_name}.md"
@@ -254,3 +251,4 @@ PY
 
 echo "OK:"
 echo "  note: $note_path"
+echo "  tech-id-language: ${VAULT_TECH_ID_LANGUAGE}"

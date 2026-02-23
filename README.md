@@ -34,9 +34,56 @@
 - Чтобы агент начал настройку своей части, напишите ему команду: `@Bootstrapper` (или `@Router`, если запрос смешанный).
 - Начните с главных страниц: `INDEX.md`, `Personal/00_Home.md`, `Work/00_Home.md`.
 
+## Настройка (подробно, один раз)
+### 1) Git и локальная папка
+- Клонируйте репозиторий и откройте его как обычную папку (Windows/WSL/macOS).
+- Проверьте Git: `git status`.
+- Задайте Git‑профиль (если ещё не задан):
+  - `git config --global user.name "Your Name"`
+  - `git config --global user.email "you@example.com"`
+- Для быстрой проверки структуры запустите: `bash scripts/healthcheck.sh`
+
+### 2) Obsidian (UI‑настройка)
+- Откройте папку как vault: `Open folder as vault`.
+- Включите `Templates` и укажите `00_System/Templates`.
+- Установите community‑плагины:
+  - `Dataview`
+  - `Tasks`
+- Рекомендуемые UI‑настройки (для чистого UX):
+  - `Show inline title = Off`
+  - `Properties in document = Collapsed` (или `Hidden`)
+- Общий граф уже настроен на скрытие тех/архивных узлов через `.obsidian/graph.json`.
+
+### 3) Скрипты и инструменты (опционально, по мере необходимости)
+- DOCX/PPTX (через `pandoc`): `scripts/setup-pandoc.sh` (если `pandoc` не установлен в системе).
+- Аудио → текст: нужен `OPENAI_API_KEY` в локальном `.env` (не коммитить).
+- Разбор входящих: `scripts/process-incoming.sh --domain work` (или `personal`).
+- Язык тех-ID/slug для новых файлов задаётся в `00_System/Vault-Config.env` (`VAULT_TECH_ID_LANGUAGE`). В этом vault установлен `русский`.
+
+## Запуск AI‑агента (быстрые сценарии)
+Если роль не указана, агент сначала предложит роль и дождётся подтверждения. Для быстрого старта лучше указывать роль явно.
+
+### Первый запуск / первичная настройка
+- `@Bootstrapper Подключаюсь к vault впервые. Проведи bootstrap и проверь настройку.`
+
+### Повседневная работа (создание/обновление артефактов)
+- `@Assistant Разбери входящие и оформи заметки, потом задай уточнения.`
+- `@Assistant Выдай сводку по задачам в человеческом формате.`
+- `@Assistant Создай/обнови проект и связанные задачи по этому описанию: ...`
+
+### Смешанный или неясный запрос
+- `@Router Помоги выбрать роль и разложить запрос на шаги: ...`
+
+### Поддержка репозитория и структуры
+- `@Repo-Maintainer Проверь здоровье vault, синхронизируй дашборды и предложи точечные фиксы.`
+
+Подробнее по ролям/командам: `00_System/Agent-Commands.md`, `00_System/Agent-Runbook.md`.
+
 ## Документация
 - Onboarding (первая настройка): `00_System/Onboarding.md`
 - Runbook агента: `00_System/Agent-Runbook.md`
+- Bootstrap (автоподготовка): `00_System/Bootstrap.md`
+- Команды ролей/режимов: `00_System/Agent-Commands.md`
 - Регламенты рутины: `00_System/Routines.md`
 
 ## Структура

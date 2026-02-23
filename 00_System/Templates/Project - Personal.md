@@ -19,12 +19,19 @@ tags:
 - <контекст/ссылки/риски>
 
 ## Tasks (open)
-> Привязывай задачи к этому проекту, добавляя ссылку `[[{{query.file.filenameWithoutExtension}}|человеческое название]]` в строку задачи.
+%% Для автоподборки задач добавляй ссылку на проект в строку задачи (используй короткий алиас). %%
 
 ```tasks
 not done
 path includes Personal/20_Tasks
 description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)?\]\]/
+sort by due
+sort by priority
+hide backlinks
+hide tags
+hide edit button
+hide postpone button
+hide task count
 ```
 
 ## Tasks (done, last week)
@@ -32,4 +39,12 @@ description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)
 done last week
 path includes Personal/20_Tasks
 description regex matches /\[\[{{query.file.filenameWithoutExtension}}(\|[^\]]+)?\]\]/
+sort by done reverse
+hide backlinks
+hide tags
+hide edit button
+hide postpone button
+hide task count
 ```
+
+#no-graph
