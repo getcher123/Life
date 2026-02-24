@@ -4,8 +4,9 @@ domain: work
 status: active
 created: {{date:YYYY-MM-DD}}
 updated: {{date:YYYY-MM-DD}}
-area:
-goal:
+# Optional links (add only if relevant; don't keep empty fields):
+# area: "[[WA-...|Название area]]"
+# goal: "[[WG-...|Название цели]]"
 tags:
   - project
 ---
@@ -15,8 +16,20 @@ tags:
 ## Outcome
 - <какой результат считаем “готово”>
 
-## Notes
-- <контекст/ссылки/риски>
+## Scope / Constraints (short)
+- <что входит в проект>
+- <ключевые ограничения / дедлайн / формат>
+
+## Reference notes (index)
+- [[WN-...|<brief / входящие>]] — <что внутри>
+- [[WN-...|<оценка / смета>]] — <что внутри>
+- [[WN-...|<ТЗ / handoff>]] — <что внутри>
+
+## Risks / Open questions
+- <критичный риск или вопрос>
+
+## Related areas (optional)
+- [[WA-...|<смежная area>]] — <если проект пересекается с несколькими контурами>
 
 ## Tasks (open)
 %% Для автоподборки задач добавляй ссылку на проект в строку задачи (используй короткий алиас). %%

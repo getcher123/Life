@@ -4,8 +4,9 @@ domain: personal
 status: active
 created: {{date:YYYY-MM-DD}}
 updated: {{date:YYYY-MM-DD}}
-area:
-goal:
+# Optional links (add only if relevant; don't keep empty fields):
+# area: "[[PA-...|Название area]]"
+# goal: "[[PG-...|Название цели]]"
 tags:
   - project
 ---
@@ -15,8 +16,19 @@ tags:
 ## Outcome
 - <какой результат считаем “готово”>
 
-## Notes
-- <контекст/ссылки/риски>
+## Scope / Constraints (short)
+- <что входит>
+- <ограничения / сроки / рамки>
+
+## Reference notes (index)
+- [[PN-...|<brief / заметка>]] — <что внутри>
+- [[PN-...|<оценка / план>]] — <что внутри>
+
+## Risks / Open questions
+- <ключевой риск или вопрос>
+
+## Related areas (optional)
+- [[PA-...|<смежная area>]] — <если есть пересечение>
 
 ## Tasks (open)
 %% Для автоподборки задач добавляй ссылку на проект в строку задачи (используй короткий алиас). %%
