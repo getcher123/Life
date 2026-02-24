@@ -14,7 +14,7 @@
    - даты (`📅`/`⏳`) только там, где это реально нужно.
 
 ## Еженедельно (Review, 30–60 минут)
-1. Создай weekly review в `*/70_Reviews/weekly/` по шаблону Weekly Review.
+1. Создай weekly review в `*/70_Reviews/weekly/` (формат файла: `YYYY-Www.md`) по шаблону Weekly Review.
 2. Подведи итоги:
    - что завершено (Tasks `done last week`);
    - что двигает цели (1–3 ключевых изменения).
