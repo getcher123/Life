@@ -13,6 +13,12 @@ tags:
 ## Definition
 - <за что отвечаю / что поддерживаю>
 
+## Reusable Checklist (optional)
+- <чеклист/гайдлайн для повторяемых задач в этой area>
+
+## Red Flags / Risks (optional)
+- <типовые риски/ошибки, на которые смотреть в задачах этой area>
+
 ## Projects
 ```dataview
 TABLE status, updated, goal
