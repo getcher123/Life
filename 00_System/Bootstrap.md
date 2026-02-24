@@ -10,7 +10,7 @@
 ## Что подготовить до bootstrap (чек-лист)
 - Репозиторий открыт локально и доступен для записи.
 - Папка открывается в Obsidian как vault.
-- Пользователь готов сделать UI‑шаги в Obsidian (Templates / Dataview / Tasks).
+- Пользователь готов сделать UI‑шаги в Obsidian (Templates / Dataview / Tasks / Kanban).
 - (Опционально) Git remote/репозиторий уже создан, если хотите сразу настроить синхронизацию.
 - (Опционально) `.env` подготовлен для инструментов, которым нужны ключи (например, audio → text).
 - (Рекомендуется) В `00_System/Vault-Config.env` проверен язык tech-ID/slug (`VAULT_TECH_ID_LANGUAGE`); для этого vault ожидается `русский`.
@@ -18,7 +18,7 @@
 ## Детектор “первого запуска”
 Считаем, что это первый запуск, если выполняется хотя бы одно:
 - нет `.obsidian/` или он пустой;
-- не установлены плагины Dataview/Tasks (пользователь ещё не включал их в Obsidian);
+- не установлены плагины Dataview/Tasks/Kanban (пользователь ещё не включал их в Obsidian);
 - нет ни одной задачи/проекта/цели (система ещё не “ожила”);
 - Git не настроен (нет `user.name`/`user.email`) или нет первого коммита.
 
@@ -37,7 +37,7 @@
 В Obsidian есть действия через UI — агент не может кликать вместо пользователя:
 1. Открыть папку как vault.
 2. Включить Templates и указать папку `00_System/Templates`.
-3. Установить community‑плагины Dataview и Tasks.
+3. Установить community‑плагины Dataview, Tasks и Kanban.
 4. (Рекомендуется) Выключить `Show inline title` и свернуть `Properties` для более чистого UX.
 5. (Рекомендуется) Свернуть/выключить inline `Backlinks` / `Outgoing links`, а также breadcrumbs (если включены), чтобы убрать техмусор.
 
@@ -46,6 +46,7 @@ Bootstrap завершён, если:
 - `scripts/healthcheck.sh` завершается без ошибок;
 - в Obsidian работают страницы:
   - `Personal/20_Tasks/00_Taskboard.md` и/или `Work/20_Tasks/00_Taskboard.md`;
+  - `*/20_Tasks/00_Kanban.md` открывается как kanban‑доска;
   - `*/30_Projects/00_Projects.md`, `*/60_Goals/00_Goals.md`, `*/70_Reviews/00_Reviews.md`;
 - есть минимум 1 цель, 1 проект, 1 задача (и задача подтягивается на странице проекта через Tasks‑запрос).
 
@@ -68,7 +69,7 @@ Bootstrap завершён, если:
 Полный список ролей и команд: `00_System/Agent-Commands.md`.
 
 ## Ожидаемый результат bootstrap (что должно появиться)
-- Рабочий Obsidian‑vault с включёнными `Templates`, `Dataview`, `Tasks`.
+- Рабочий Obsidian‑vault с включёнными `Templates`, `Dataview`, `Tasks`, `Kanban`.
 - Настроенный “чистый” UI в Obsidian (без лишних техпанелей/заголовков в заметках).
 - Рабочие точки входа без ошибок: `00_Home`, `00_Taskboard`, `00_Projects`, `00_Goals`, `00_Reviews`.
 - Минимум одна “живая связка” (`goal → project → tasks`) в `Work` или `Personal`.

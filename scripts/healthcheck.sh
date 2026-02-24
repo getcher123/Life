@@ -65,6 +65,9 @@ fi
 if ! grep -q '"obsidian-tasks-plugin"' ".obsidian/community-plugins.json"; then
   warn "Tasks not listed in .obsidian/community-plugins.json"
 fi
+if ! grep -q '"obsidian-kanban"' ".obsidian/community-plugins.json"; then
+  warn "Kanban not listed in .obsidian/community-plugins.json"
+fi
 
 source "scripts/lib_vault_naming.sh"
 vault_load_naming_config "$(pwd)"
