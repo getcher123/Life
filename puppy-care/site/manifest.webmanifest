@@ -1,0 +1,22 @@
+{
+  "name": "Лапа за лапой — щенок той-пуделя",
+  "short_name": "Лапа за лапой",
+  "lang": "ru",
+  "start_url": "./index.html#home",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7f6f2",
+  "theme_color": "#27634e",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
