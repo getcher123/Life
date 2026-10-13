@@ -1,0 +1,62 @@
+name: Lapaza import and browser verification
+on:
+  push:
+    branches: [puppy-care-web]
+    paths: [.github/workflows/lapaza-import.yml]
+permissions:
+  contents: write
+concurrency:
+  group: lapaza-import
+  cancel-in-progress: false
+jobs:
+  import-test-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: puppy-care-web
+      - name: Import only the generated public app bundle
+        env:
+          BUNDLE_URL: 'https://sdmntpritalynorth.oaiusercontent.com/files/00000000-c5a4-8246-bea5-42d6d9f0121c/raw?se=2026-10-13T18%3A45%3A42Z&sp=r&sv=2026-02-06&sr=b&scid=83cd6053-b5f1-5b09-a6c8-830b16dc79e0&skoid=e5e3659d-4463-4dbf-b2ce-ee32bc0a0a8d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-13T03%3A50%3A29Z&ske=2026-10-14T03%3A50%3A29Z&sks=b&skv=2026-02-06&sig=dJDmP/7sUTlRq3M01m0AXkdvubyoCRa5J2J2/zALslE%3D'
+        run: |
+          python - <<'PY'
+          import hashlib, io, os, pathlib, urllib.request, zipfile
+          data = urllib.request.urlopen(os.environ['BUNDLE_URL'], timeout=60).read()
+          expected = '3d38aa4d35747f1faca1ae13014a452d9926ae6bbbc88dff9003a7fa388cb7f5'
+          assert hashlib.sha256(data).hexdigest() == expected, 'Bundle checksum mismatch'
+          root = pathlib.Path('puppy-care').resolve()
+          root.mkdir(exist_ok=True)
+          with zipfile.ZipFile(io.BytesIO(data)) as archive:
+              for member in archive.infolist():
+                  target = (root / member.filename).resolve()
+                  assert target.is_relative_to(root), 'Unsafe archive path'
+              archive.extractall(root)
+          print('Imported generated static app only; no filled family records.')
+          PY
+      - name: Install browser test runtime
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify syntax and browser interactions
+        run: |
+          node --check puppy-care/site/app.js
+          node --check puppy-care/site/games.js
+          python puppy-care/qa/test_app.py
+      - name: Preserve browser verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lapaza-browser-evidence
+          path: |
+            puppy-care/qa/*.png
+            puppy-care/qa/test_results.json
+          if-no-files-found: ignore
+      - name: Publish verified static files to isolated branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add puppy-care/site puppy-care/README.md puppy-care/state.md puppy-care/qa/test_app.py puppy-care/qa/test_results.json
+          git commit -m 'Publish tested Lapaza puppy care web app'
+          git push origin HEAD:puppy-care-web
+          echo "Published app commit: $(git rev-parse HEAD)"
