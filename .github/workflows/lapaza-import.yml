@@ -38,13 +38,14 @@ jobs:
           start = source.index('page.wait_for_function(')
           end = source.index(";ok('Explicit offline cache completed')", start)
           source = source[:start] + "expect(page.locator('#offline-status')).to_contain_text('Готово:',timeout=15000)" + source[end:]
+          source = source.replace("mp.locator('#book-results a').first.click();ok(", "mp.locator('#book-results a').first.click();mp.wait_for_selector('.reader-body');ok(")
           test.write_text(source)
           print('Imported generated static app only; no filled family records.')
           PY
       - name: Install browser test runtime
         run: |
-          python -m pip install playwright
-          python -m playwright install --with-deps chromium
+          python -m pip install playwright > /tmp/puppy-install.log 2>&1
+          python -m playwright install --with-deps chromium >> /tmp/puppy-install.log 2>&1 || { tail -60 /tmp/puppy-install.log; exit 1; }
       - name: Verify syntax and browser interactions
         run: |
           node --check puppy-care/site/app.js
