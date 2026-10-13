@@ -1,0 +1,17 @@
+{
+  "public_url": "https://rawcdn.githack.com/getcher123/Life/d591accbfeca5fd65e8c423e6878372432a83f82/puppy-care/site/index.html",
+  "passed": 10,
+  "checks": [
+    "Hosting asks for a visible Open the page confirmation on the first visit",
+    "Actual published app loads over HTTPS after the visible hosting confirmation",
+    "Public start button opens the source chapter",
+    "Public full-text search works",
+    "Public touch game and feedback work",
+    "Shared host accepts non-sensitive checks but does not expose private contact forms",
+    "Emergency section has no lesson prerequisite",
+    "Public app files cached after explicit request",
+    "Published app reloads offline after successful caching",
+    "No uncaught public-page JavaScript errors"
+  ],
+  "errors": []
+}
