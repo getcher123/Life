@@ -18,7 +18,7 @@ jobs:
           ref: puppy-care-web
       - name: Import only the generated public app bundle
         env:
-          BUNDLE_URL: 'https://sdmntpritalynorth.oaiusercontent.com/files/00000000-c5a4-8246-bea5-42d6d9f0121c/raw?se=2026-10-13T18%3A45%3A42Z&sp=r&sv=2026-02-06&sr=b&scid=83cd6053-b5f1-5b09-a6c8-830b16dc79e0&skoid=e5e3659d-4463-4dbf-b2ce-ee32bc0a0a8d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-13T03%3A50%3A29Z&ske=2026-10-14T03%3A50%3A29Z&sks=b&skv=2026-02-06&sig=dJDmP/7sUTlRq3M01m0AXkdvubyoCRa5J2J2/zALslE%3D'
+          BUNDLE_URL: 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-8918-8210-80e1-2669c6387d63/raw?se=2026-10-13T18%3A48%3A05Z&sp=r&sv=2026-02-06&sr=b&scid=ceb0bafe-f47d-5c1c-bc1f-031e86b311b9&skoid=e5e3659d-4463-4dbf-b2ce-ee32bc0a0a8d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-13T05%3A06%3A32Z&ske=2026-10-14T05%3A06%3A32Z&sks=b&skv=2026-02-06&sig=Lu21aWrDIV18lb09v3i2FLw5iMM8JtuoQeovmKDXIkM%3D'
         run: |
           python - <<'PY'
           import hashlib, io, os, pathlib, urllib.request, zipfile
@@ -32,6 +32,13 @@ jobs:
                   target = (root / member.filename).resolve()
                   assert target.is_relative_to(root), 'Unsafe archive path'
               archive.extractall(root)
+          test = root / 'qa/test_app.py'
+          source = test.read_text()
+          source = source.replace('from playwright.sync_api import sync_playwright', 'from playwright.sync_api import sync_playwright, expect')
+          start = source.index('page.wait_for_function(')
+          end = source.index(";ok('Explicit offline cache completed')", start)
+          source = source[:start] + "expect(page.locator('#offline-status')).to_contain_text('Готово:',timeout=15000)" + source[end:]
+          test.write_text(source)
           print('Imported generated static app only; no filled family records.')
           PY
       - name: Install browser test runtime
