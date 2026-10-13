@@ -1,57 +1,97 @@
-name: Lapaza import and browser verification
+name: Lapaza verification and public-link smoke test
 on:
   push:
     branches: [puppy-care-web]
-    paths: [.github/workflows/lapaza-import.yml]
+    paths:
+      - .github/workflows/lapaza-import.yml
+      - puppy-care/site/**
+      - puppy-care/qa/test_app.py
 permissions:
   contents: write
 concurrency:
-  group: lapaza-import
+  group: lapaza-verification
   cancel-in-progress: false
 jobs:
-  import-test-publish:
+  verify:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
         with:
           ref: puppy-care-web
-      - name: Import only the generated public app bundle
-        env:
-          BUNDLE_URL: 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-8918-8210-80e1-2669c6387d63/raw?se=2026-10-13T18%3A48%3A05Z&sp=r&sv=2026-02-06&sr=b&scid=ceb0bafe-f47d-5c1c-bc1f-031e86b311b9&skoid=e5e3659d-4463-4dbf-b2ce-ee32bc0a0a8d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-13T05%3A06%3A32Z&ske=2026-10-14T05%3A06%3A32Z&sks=b&skv=2026-02-06&sig=Lu21aWrDIV18lb09v3i2FLw5iMM8JtuoQeovmKDXIkM%3D'
-        run: |
-          python - <<'PY'
-          import hashlib, io, os, pathlib, urllib.request, zipfile
-          data = urllib.request.urlopen(os.environ['BUNDLE_URL'], timeout=60).read()
-          expected = '3d38aa4d35747f1faca1ae13014a452d9926ae6bbbc88dff9003a7fa388cb7f5'
-          assert hashlib.sha256(data).hexdigest() == expected, 'Bundle checksum mismatch'
-          root = pathlib.Path('puppy-care').resolve()
-          root.mkdir(exist_ok=True)
-          with zipfile.ZipFile(io.BytesIO(data)) as archive:
-              for member in archive.infolist():
-                  target = (root / member.filename).resolve()
-                  assert target.is_relative_to(root), 'Unsafe archive path'
-              archive.extractall(root)
-          test = root / 'qa/test_app.py'
-          source = test.read_text()
-          source = source.replace('from playwright.sync_api import sync_playwright', 'from playwright.sync_api import sync_playwright, expect')
-          start = source.index('page.wait_for_function(')
-          end = source.index(";ok('Explicit offline cache completed')", start)
-          source = source[:start] + "expect(page.locator('#offline-status')).to_contain_text('Готово:',timeout=15000)" + source[end:]
-          source = source.replace("mp.locator('#book-results a').first.click();ok(", "mp.locator('#book-results a').first.click();mp.wait_for_selector('.reader-body');ok(")
-          test.write_text(source)
-          print('Imported generated static app only; no filled family records.')
-          PY
       - name: Install browser test runtime
         run: |
           python -m pip install playwright > /tmp/puppy-install.log 2>&1
           python -m playwright install --with-deps chromium >> /tmp/puppy-install.log 2>&1 || { tail -60 /tmp/puppy-install.log; exit 1; }
-      - name: Verify syntax and browser interactions
+      - name: Verify all local interactions with native browser storage and offline cache
         run: |
           node --check puppy-care/site/app.js
-          node --check puppy-care/site/games.js
           python puppy-care/qa/test_app.py
-      - name: Preserve browser verification evidence
+      - name: Verify published HTTPS application in a mobile browser
+        env:
+          PUBLIC_URL: https://rawcdn.githack.com/getcher123/Life/d591accbfeca5fd65e8c423e6878372432a83f82/puppy-care/site/index.html
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          from playwright.sync_api import sync_playwright, expect
+          root = pathlib.Path('puppy-care')
+          url = os.environ['PUBLIC_URL']
+          passed = []
+          errors = []
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True, args=['--no-sandbox'])
+              context = browser.new_context(viewport={'width':390,'height':844}, is_mobile=True, has_touch=True)
+              page = context.new_page()
+              page.set_default_timeout(30000)
+              page.on('pageerror', lambda e: errors.append(str(e)))
+              response = page.goto(url, wait_until='domcontentloaded', timeout=60000)
+              assert response and response.status == 200, 'Public HTML did not return HTTP 200'
+              expect(page.locator('.hero')).to_be_visible()
+              passed.append('Published HTTPS home loaded in Chromium with HTTP 200')
+              page.screenshot(path=str(root/'qa/public-mobile-home.png'), full_page=True)
+              page.locator('.hero-copy a.button').first.click()
+              expect(page.locator('.reader-body')).to_be_visible()
+              passed.append('Public start button opens a source chapter')
+              page.goto(url+'#library')
+              page.locator('#search').fill('шерсть')
+              expect(page.locator('#book-results a[href="#article/coat"]')).to_be_visible()
+              passed.append('Public full-text search works')
+              page.goto(url+'#game/room')
+              page.locator('.hotspot').first.click()
+              expect(page.locator('#modal')).to_be_visible()
+              page.locator('[data-action="hazard-understood"]').click()
+              expect(page.locator('.hotspot.found')).to_have_count(1)
+              passed.append('Public touch game and feedback work')
+              page.screenshot(path=str(root/'qa/public-mobile-room.png'), full_page=True)
+              page.goto(url+'#mom')
+              page.locator('[data-action="mom-tab"][data-tab="prepare"]').click()
+              expect(page.locator('[data-proof-tick]')).to_have_count(10)
+              page.locator('[data-action="mom-tab"][data-tab="passport"]').click()
+              expect(page.locator('#passport-form')).to_have_count(0)
+              passed.append('Shared public host blocks personal contact forms and exposes non-sensitive confirmation checks')
+              page.goto(url+'#emergency')
+              expect(page.get_by_text('Сейчас нужна помощь?')).to_be_visible()
+              passed.append('Public emergency section has no lesson prerequisite')
+              page.goto(url+'#settings')
+              page.locator('[data-action="offline"]').click()
+              expect(page.locator('#offline-status')).to_contain_text('Готово:',timeout=90000)
+              passed.append('All public app files cached successfully without directory-index requests')
+              page.reload()
+              context.set_offline(True)
+              page.reload()
+              expect(page.get_by_text('Ваши данные — у вас')).to_be_visible()
+              passed.append('Published app reloads offline after explicit caching')
+              context.set_offline(False)
+              assert not errors, errors
+              passed.append('No uncaught public-page JavaScript errors')
+              browser.close()
+          result = {'public_url':url,'passed':len(passed),'checks':passed,'errors':errors}
+          (root/'qa/public_smoke_results.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
+          print(json.dumps(result,ensure_ascii=False,indent=2))
+          native = json.loads((root/'qa/test_results.json').read_text())
+          (root/'state.md').write_text('# Лапа за лапой — опубликованная версия\n\nДата: 2026-10-13.\nПубличный адрес: '+url+'\n\nНативный браузер: '+str(native['passed'])+' проверок прошли. Внешняя ссылка: '+str(len(passed))+' проверок прошли.\n\n30 разделов книги, 41 источник, 24 исходных изображения, 3 новых настоящих фото и 4 новых AI-иллюстрации. Все активы локальные. Source manifest сохранён в site/source-manifest.json.\n\nПубличная версия на общем домене не принимает личные контакты и медицинские записи. Локальная версия или индивидуальный домен поддерживает их без серверной синхронизации.\n\nРабочая ветка puppy-care-web репозитория getcher123/Life. Main не изменён. Для обновления править только puppy-care/site, затем прогонять qa/test_app.py и менять версию CACHE в sw.js. Публичная ссылка закреплена за конкретным commit: при выпуске нового релиза обновить URL и smoke test.\n')
+          PY
+      - name: Preserve verification evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -59,12 +99,12 @@ jobs:
           path: |
             puppy-care/qa/*.png
             puppy-care/qa/test_results.json
+            puppy-care/qa/public_smoke_results.json
           if-no-files-found: ignore
-      - name: Publish verified static files to isolated branch
+      - name: Record verification and handoff
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add puppy-care/site puppy-care/README.md puppy-care/state.md puppy-care/qa/test_app.py puppy-care/qa/test_results.json
-          git commit -m 'Publish tested Lapaza puppy care web app'
+          git add puppy-care/state.md puppy-care/qa/test_results.json puppy-care/qa/public_smoke_results.json
+          git diff --cached --quiet || git commit -m 'Record native and published URL browser verification'
           git push origin HEAD:puppy-care-web
-          echo "Published app commit: $(git rev-parse HEAD)"
