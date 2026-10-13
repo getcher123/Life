@@ -1,10 +1,14 @@
-import json, os
+import json, os, subprocess
 from pathlib import Path
 from playwright.sync_api import sync_playwright, expect
 
 ROOT = Path(__file__).resolve().parents[1]
-URL = os.environ.get('PUBLIC_URL', 'https://rawcdn.githack.com/getcher123/Life/d591accbfeca5fd65e8c423e6878372432a83f82/puppy-care/site/index.html')
-passed, errors = [], []
+try:
+    ref = subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT.parent, text=True).strip()
+except Exception:
+    ref = '121ebcc5e1d0bf6456d080eb9dca7d7baa4141d2'
+URL = os.environ.get('PUBLIC_URL', 'https://rawcdn.githack.com/getcher123/Life/'+ref+'/puppy-care/site/index.html')
+passed, errors, console_errors = [], [], []
 
 def record(text):
     passed.append(text)
@@ -16,18 +20,33 @@ with sync_playwright() as p:
     page = context.new_page()
     page.set_default_timeout(30000)
     page.on('pageerror', lambda e: errors.append(str(e)))
+    page.on('console', lambda m: console_errors.append(m.text) if m.type == 'error' else None)
     try:
         response = page.goto(URL, wait_until='domcontentloaded', timeout=60000)
         assert response and response.status == 200, 'Public endpoint did not return HTTP 200'
         consent = page.get_by_text('Open the page', exact=True)
         if consent.is_visible():
-            # The service asks the visitor to explicitly open this known, generated page.
-            # Click the normal visible control; never bypass the hosting security screen.
+            # Use the hosting service's normal visible confirmation for this known page.
             consent.click()
             record('Hosting asks for a visible Open the page confirmation on the first visit')
         expect(page.locator('.hero-copy')).to_be_visible(timeout=45000)
         assert 'Лапа за лапой' in page.title(), page.title()
         record('Actual published app loads over HTTPS after the visible hosting confirmation')
+        assets = page.evaluate('''() => [...new Set([
+            ...KB.chapters.flatMap(c => [...c.html.matchAll(/src="([^"]+)"/g)].map(m=>m[1])),
+            ...KB.photos.map(p=>'assets/'+p.file),
+            ...['play','sleep','carrier','walk'].map(n=>'assets/art-'+n+'.webp')
+        ])]''')
+        failures = page.evaluate('''async list => (await Promise.all(list.map(src => new Promise(resolve => {
+            const image = new Image();
+            const timer=setTimeout(()=>resolve({src,error:'timeout'}),20000);
+            image.onload=()=>{clearTimeout(timer);resolve(image.naturalWidth>0?null:{src,error:'empty image'});};
+            image.onerror=()=>{clearTimeout(timer);resolve({src,error:'load failed'});};
+            image.src=src;
+        })))).filter(Boolean)''',assets)
+        assert not failures, {'images':failures,'console':console_errors}
+        page.evaluate('''async () => {const imgs=[...document.images]; imgs.forEach(i=>i.loading='eager'); await Promise.all(imgs.map(i=>i.decode()));}''')
+        record('All '+str(len(assets))+' published photos, illustrations and source diagrams decode successfully')
         page.screenshot(path=str(ROOT/'qa/public-mobile-home.png'), full_page=True)
         page.locator('.hero-copy a.button').first.click()
         expect(page.locator('.reader-body')).to_be_visible()
@@ -67,7 +86,7 @@ with sync_playwright() as p:
     except Exception:
         page.screenshot(path=str(ROOT/'qa/public-failure.png'), full_page=True)
         (ROOT/'qa/public-failure.html').write_text(page.content())
-        (ROOT/'qa/public_partial.json').write_text(json.dumps({'passed':passed,'errors':errors,'url':page.url},ensure_ascii=False,indent=2))
+        (ROOT/'qa/public_partial.json').write_text(json.dumps({'passed':passed,'errors':errors,'console':console_errors,'url':page.url},ensure_ascii=False,indent=2))
         raise
     finally:
         browser.close()
