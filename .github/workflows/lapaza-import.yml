@@ -6,6 +6,7 @@ on:
       - .github/workflows/lapaza-import.yml
       - puppy-care/site/**
       - puppy-care/qa/test_app.py
+      - puppy-care/qa/test_public.py
 permissions:
   contents: write
 concurrency:
@@ -23,74 +24,12 @@ jobs:
         run: |
           python -m pip install playwright > /tmp/puppy-install.log 2>&1
           python -m playwright install --with-deps chromium >> /tmp/puppy-install.log 2>&1 || { tail -60 /tmp/puppy-install.log; exit 1; }
-      - name: Verify all local interactions with native browser storage and offline cache
+      - name: Verify local app, storage, source fidelity and offline behavior
         run: |
           node --check puppy-care/site/app.js
           python puppy-care/qa/test_app.py
-      - name: Verify published HTTPS application in a mobile browser
-        env:
-          PUBLIC_URL: https://rawcdn.githack.com/getcher123/Life/d591accbfeca5fd65e8c423e6878372432a83f82/puppy-care/site/index.html
-        run: |
-          python - <<'PY'
-          import json, os, pathlib
-          from playwright.sync_api import sync_playwright, expect
-          root = pathlib.Path('puppy-care')
-          url = os.environ['PUBLIC_URL']
-          passed = []
-          errors = []
-          with sync_playwright() as p:
-              browser = p.chromium.launch(headless=True, args=['--no-sandbox'])
-              context = browser.new_context(viewport={'width':390,'height':844}, is_mobile=True, has_touch=True)
-              page = context.new_page()
-              page.set_default_timeout(30000)
-              page.on('pageerror', lambda e: errors.append(str(e)))
-              response = page.goto(url, wait_until='domcontentloaded', timeout=60000)
-              assert response and response.status == 200, 'Public HTML did not return HTTP 200'
-              expect(page.locator('.hero')).to_be_visible()
-              passed.append('Published HTTPS home loaded in Chromium with HTTP 200')
-              page.screenshot(path=str(root/'qa/public-mobile-home.png'), full_page=True)
-              page.locator('.hero-copy a.button').first.click()
-              expect(page.locator('.reader-body')).to_be_visible()
-              passed.append('Public start button opens a source chapter')
-              page.goto(url+'#library')
-              page.locator('#search').fill('шерсть')
-              expect(page.locator('#book-results a[href="#article/coat"]')).to_be_visible()
-              passed.append('Public full-text search works')
-              page.goto(url+'#game/room')
-              page.locator('.hotspot').first.click()
-              expect(page.locator('#modal')).to_be_visible()
-              page.locator('[data-action="hazard-understood"]').click()
-              expect(page.locator('.hotspot.found')).to_have_count(1)
-              passed.append('Public touch game and feedback work')
-              page.screenshot(path=str(root/'qa/public-mobile-room.png'), full_page=True)
-              page.goto(url+'#mom')
-              page.locator('[data-action="mom-tab"][data-tab="prepare"]').click()
-              expect(page.locator('[data-proof-tick]')).to_have_count(10)
-              page.locator('[data-action="mom-tab"][data-tab="passport"]').click()
-              expect(page.locator('#passport-form')).to_have_count(0)
-              passed.append('Shared public host blocks personal contact forms and exposes non-sensitive confirmation checks')
-              page.goto(url+'#emergency')
-              expect(page.get_by_text('Сейчас нужна помощь?')).to_be_visible()
-              passed.append('Public emergency section has no lesson prerequisite')
-              page.goto(url+'#settings')
-              page.locator('[data-action="offline"]').click()
-              expect(page.locator('#offline-status')).to_contain_text('Готово:',timeout=90000)
-              passed.append('All public app files cached successfully without directory-index requests')
-              page.reload()
-              context.set_offline(True)
-              page.reload()
-              expect(page.get_by_text('Ваши данные — у вас')).to_be_visible()
-              passed.append('Published app reloads offline after explicit caching')
-              context.set_offline(False)
-              assert not errors, errors
-              passed.append('No uncaught public-page JavaScript errors')
-              browser.close()
-          result = {'public_url':url,'passed':len(passed),'checks':passed,'errors':errors}
-          (root/'qa/public_smoke_results.json').write_text(json.dumps(result,ensure_ascii=False,indent=2))
-          print(json.dumps(result,ensure_ascii=False,indent=2))
-          native = json.loads((root/'qa/test_results.json').read_text())
-          (root/'state.md').write_text('# Лапа за лапой — опубликованная версия\n\nДата: 2026-10-13.\nПубличный адрес: '+url+'\n\nНативный браузер: '+str(native['passed'])+' проверок прошли. Внешняя ссылка: '+str(len(passed))+' проверок прошли.\n\n30 разделов книги, 41 источник, 24 исходных изображения, 3 новых настоящих фото и 4 новых AI-иллюстрации. Все активы локальные. Source manifest сохранён в site/source-manifest.json.\n\nПубличная версия на общем домене не принимает личные контакты и медицинские записи. Локальная версия или индивидуальный домен поддерживает их без серверной синхронизации.\n\nРабочая ветка puppy-care-web репозитория getcher123/Life. Main не изменён. Для обновления править только puppy-care/site, затем прогонять qa/test_app.py и менять версию CACHE в sw.js. Публичная ссылка закреплена за конкретным commit: при выпуске нового релиза обновить URL и smoke test.\n')
-          PY
+      - name: Verify actual public app after visible hosting confirmation
+        run: python puppy-care/qa/test_public.py
       - name: Preserve verification evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -98,13 +37,20 @@ jobs:
           name: lapaza-browser-evidence
           path: |
             puppy-care/qa/*.png
-            puppy-care/qa/test_results.json
-            puppy-care/qa/public_smoke_results.json
+            puppy-care/qa/*.json
+            puppy-care/qa/public-failure.html
           if-no-files-found: ignore
       - name: Record verification and handoff
         run: |
+          python - <<'PY'
+          import json, pathlib
+          root=pathlib.Path('puppy-care')
+          native=json.loads((root/'qa/test_results.json').read_text())
+          live=json.loads((root/'qa/public_smoke_results.json').read_text())
+          (root/'state.md').write_text('# Лапа за лапой — опубликованная версия\n\nДата: 2026-10-13.\nПубличный адрес: '+live['public_url']+'\n\nПервое открытие: хостинг показывает кнопку Open the page. Это видимое подтверждение пользователя, не обходить его.\n\nНативный браузер: '+str(native['passed'])+' проверок прошли. Внешняя ссылка: '+str(live['passed'])+' проверок прошли.\n\n30 разделов книги, 41 источник, 24 исходных изображения, 3 новых настоящих фото и 4 новых AI-иллюстрации. Все активы локальные. Source manifest: site/source-manifest.json.\n\nНа общем домене отключены личная карточка, медицинский журнал и свободные поля; доступны знания, игры, отметки чтения, день, обезличенные проверки и отпуск. В локальной версии и на индивидуальном домене личные записи доступны без серверной синхронизации.\n\nВетка puppy-care-web репозитория getcher123/Life. Main не изменён. При обновлении: править только puppy-care/site, прогонять qa/test_app.py и qa/test_public.py, менять CACHE в sw.js и фиксированный commit в PUBLIC_URL. Никаких секретов, аналитики и облачных личных данных в приложении нет.\n')
+          PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add puppy-care/state.md puppy-care/qa/test_results.json puppy-care/qa/public_smoke_results.json
-          git diff --cached --quiet || git commit -m 'Record native and published URL browser verification'
+          git diff --cached --quiet || git commit -m 'Record native and live public-link browser verification'
           git push origin HEAD:puppy-care-web
