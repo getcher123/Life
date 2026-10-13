@@ -1,9 +1,10 @@
 {
-  "public_url": "https://rawcdn.githack.com/getcher123/Life/d591accbfeca5fd65e8c423e6878372432a83f82/puppy-care/site/index.html",
-  "passed": 10,
+  "public_url": "https://rawcdn.githack.com/getcher123/Life/72de0dae61ea0fe8cde427ae37129c78aceaf261/puppy-care/site/index.html",
+  "passed": 11,
   "checks": [
     "Hosting asks for a visible Open the page confirmation on the first visit",
     "Actual published app loads over HTTPS after the visible hosting confirmation",
+    "All 31 published photos, illustrations and source diagrams decode successfully",
     "Public start button opens the source chapter",
     "Public full-text search works",
     "Public touch game and feedback work",
